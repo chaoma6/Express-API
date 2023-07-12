@@ -1,25 +1,24 @@
 import { authentication } from './../helpers/index';
 import express from 'express';
 
-import { getUsersByEmail, createUser } from 'db/users';
-import { random } from 'helpers';
+import { getUserByEmail, createUser } from '../db/users';
+import { random } from '../helpers';
 
 export const register = async (req: express.Request, res: express.Response) => {
 	try {
 		const { email, password, username } = req.body;
 
 		if (!email || !password || !username) {
-			return res.status(400).send('Missing fields');
+			return res.sendStatus(400);
 		}
 
-		const existingUser = await getUsersByEmail(email);
+		const existingUser = await getUserByEmail(email);
 
 		if (existingUser) {
-			return res.status(409).send('User already exists');
+			return res.sendStatus(400);
 		}
 
 		const salt = random();
-
 		const user = await createUser({
 			email,
 			username,
